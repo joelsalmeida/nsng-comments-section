@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
+import { LikeCommentDto } from './dto/like-comment.dto';
 
 @Controller('comment')
 export class CommentController {
@@ -23,15 +24,14 @@ export class CommentController {
     }
   }
 
-  @Get()
-  async findAll() {
+  @Post('like')
+  async like(@Body() likeCommentDto: LikeCommentDto) {
     try {
-      const data = await this.commentService.findAll();
+      const data = await this.commentService.like(likeCommentDto);
 
       return {
         success: true,
-        message: 'Comments fetched Successfully',
-        data,
+        message: data,
       };
     } catch (error) {
       return {
@@ -49,6 +49,24 @@ export class CommentController {
       return {
         success: true,
         message: 'Comment fetched successfully',
+        data,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+  }
+
+  @Get()
+  async findAll() {
+    try {
+      const data = await this.commentService.findAll();
+
+      return {
+        success: true,
+        message: 'Comments fetched Successfully',
         data,
       };
     } catch (error) {
