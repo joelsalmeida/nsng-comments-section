@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { User } from '../user/user.entity';
 
 @Entity()
@@ -9,7 +15,10 @@ export class Comment {
   @Column()
   body: string;
 
-  @Column()
+  @JoinColumn()
   @ManyToOne(() => User, (user) => user.id)
-  byUserId: string;
+  sender: string;
+
+  @Column('simple-array')
+  likes: string[];
 }

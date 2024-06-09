@@ -1,11 +1,11 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateCommentDto {
+export class LikeCommentDto {
   @IsNotEmpty()
   @IsString()
   sender: string;
 
   @IsNotEmpty()
   @IsString()
-  body: string;
+  comment: string;
 }
