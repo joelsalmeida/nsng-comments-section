@@ -13,6 +13,7 @@ export class ResponseService {
 
   async create(createResponseDto: CreateResponseDto): Promise<Response> {
     const response = this.responseRepository.create(createResponseDto);
+    response.likes = [];
     return this.responseRepository.save(response);
   }
 
@@ -22,6 +23,13 @@ export class ResponseService {
 
   findOne(id: string): Promise<Response | null> {
     return this.responseRepository.findOneBy({ id });
+  }
+
+  findByCommentId(comment: string): Promise<Response[] | null> {
+    return this.responseRepository
+      .createQueryBuilder('response')
+      .where('response.comment = :comment', { comment })
+      .getMany();
   }
 
   async remove(id: string): Promise<void> {
