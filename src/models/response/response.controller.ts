@@ -23,14 +23,14 @@ export class ResponseController {
     }
   }
 
-  @Get()
-  async findAll() {
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
     try {
-      const data = await this.responseService.findAll();
+      const data = await this.responseService.findOne(id);
 
       return {
         success: true,
-        message: 'Responses fetched Successfully',
+        message: 'Response fetched successfully',
         data,
       };
     } catch (error) {
@@ -41,14 +41,14 @@ export class ResponseController {
     }
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
+  @Get()
+  async findAll() {
     try {
-      const data = await this.responseService.findOne(id);
+      const data = await this.responseService.findAll();
 
       return {
         success: true,
-        message: 'Response fetched successfully',
+        message: 'Responses fetched Successfully',
         data,
       };
     } catch (error) {
