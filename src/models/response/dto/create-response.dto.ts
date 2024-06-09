@@ -3,15 +3,15 @@ import { IsNotEmpty, IsString } from 'class-validator';
 export class CreateResponseDto {
   @IsNotEmpty()
   @IsString()
-  toCommentId: string;
+  comment: string;
 
   @IsNotEmpty()
   @IsString()
-  by_user: string;
+  sender: string;
 
   @IsNotEmpty()
   @IsString()
-  to_user: string;
+  recipient: string;
 
   @IsNotEmpty()
   @IsString()

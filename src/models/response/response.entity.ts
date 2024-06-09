@@ -1,20 +1,33 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Comment } from '../comment/comment.entity';
+import { User } from '../user/user.entity';
 
 @Entity()
 export class Response {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @JoinColumn()
   @ManyToOne(() => Comment, (comment) => comment.id)
-  toCommentId: string;
+  comment: string;
 
-  @Column()
-  by_user: string;
+  @JoinColumn()
+  @ManyToOne(() => User, (user) => user.id)
+  sender: string;
 
-  @Column()
-  to_user: string;
+  @JoinColumn()
+  @ManyToOne(() => User, (user) => user.id)
+  recipient: string;
 
   @Column()
   body: string;
+
+  @Column('simple-array')
+  likes: string[];
 }
