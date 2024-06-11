@@ -41,6 +41,24 @@ export class CommentController {
     }
   }
 
+  @Get('timeline')
+  async timeline() {
+    try {
+      const data = await this.commentService.timeline();
+
+      return {
+        success: true,
+        message: 'Comments timeline fetched Successfully',
+        data: data,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     try {

@@ -29,6 +29,17 @@ export class CommentService {
     return await this.commentRepository.find();
   }
 
+  async timeline(): Promise<Comment[]> {
+    return await this.commentRepository.find({
+      relations: [
+        'sender',
+        'responses',
+        'responses.sender',
+        'responses.recipient',
+      ],
+    });
+  }
+
   findOne(id: string): Promise<Comment | null> {
     return this.commentRepository.findOneBy({ id });
   }
