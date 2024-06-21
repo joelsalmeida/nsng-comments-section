@@ -1,7 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { LikeCommentDto } from './dto/like-comment.dto';
+import { PatchCommentDto } from './dto/patch-comment.dto';
 
 @Controller('comment')
 export class CommentController {
@@ -32,6 +41,34 @@ export class CommentController {
       return {
         success: true,
         message: data,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+  }
+
+  @Patch(':id')
+  async patch(
+    @Param('id') id: string,
+    @Body() updateCommentDto: PatchCommentDto,
+  ) {
+    try {
+      const data = await this.commentService.patch(id, updateCommentDto);
+
+      if (!data) {
+        return {
+          success: false,
+          message: `Comment not found with id: ${id}`,
+        };
+      }
+
+      return {
+        success: true,
+        message: 'Comment patched successfully',
+        data,
       };
     } catch (error) {
       return {

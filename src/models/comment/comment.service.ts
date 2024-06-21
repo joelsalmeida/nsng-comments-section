@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Comment } from './comment.entity';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { LikeCommentDto } from './dto/like-comment.dto';
+import { PatchCommentDto } from './dto/patch-comment.dto';
 
 @Injectable()
 export class CommentService {
@@ -16,6 +17,15 @@ export class CommentService {
     const comment = this.commentRepository.create(createCommentDto);
     comment.likes = [];
     return this.commentRepository.save(comment);
+  }
+
+  async patch(id: string, patchCommentDto: PatchCommentDto): Promise<Comment> {
+    const comment = this.commentRepository.findOneBy({ id });
+
+    if (!comment) return null;
+
+    await this.commentRepository.update(id, patchCommentDto);
+    return this.commentRepository.findOneBy({ id });
   }
 
   findBySender(sender: string): Promise<Comment[] | null> {
