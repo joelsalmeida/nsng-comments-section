@@ -1,5 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { CreateResponseDto } from './dto/create-response.dto';
+import { LikeResponseDto } from './dto/like-response.dto';
+import { PatchResponseDto } from './dto/patch-response.dto';
 import { ResponseService } from './response.service';
 
 @Controller('response')
@@ -14,6 +24,51 @@ export class ResponseController {
       return {
         success: true,
         message: 'Response posted successfully',
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+  }
+
+  @Post('like')
+  async like(@Body() likeResponseDto: LikeResponseDto) {
+    try {
+      const data = await this.responseService.like(likeResponseDto);
+
+      return {
+        success: true,
+        message: data,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+  }
+
+  @Patch(':id')
+  async patch(
+    @Param('id') id: string,
+    @Body() patchResponseDto: PatchResponseDto,
+  ) {
+    try {
+      const data = await this.responseService.patch(id, patchResponseDto);
+
+      if (!data) {
+        return {
+          success: false,
+          message: `Response not found with id: ${id}`,
+        };
+      }
+
+      return {
+        success: true,
+        message: 'Response patched successfully',
+        data,
       };
     } catch (error) {
       return {

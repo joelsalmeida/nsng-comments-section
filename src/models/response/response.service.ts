@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateResponseDto } from './dto/create-response.dto';
+import { LikeResponseDto } from './dto/like-response.dto';
+import { PatchResponseDto } from './dto/patch-response.dto';
 import { Response } from './response.entity';
 
 @Injectable()
@@ -15,6 +17,55 @@ export class ResponseService {
     const response = this.responseRepository.create(createResponseDto);
     response.likes = [];
     return this.responseRepository.save(response);
+  }
+
+  async patch(
+    id: string,
+    patchResponseDto: PatchResponseDto,
+  ): Promise<Response> {
+    const response = this.responseRepository.findOneBy({ id });
+
+    if (!response) return null;
+
+    await this.responseRepository.update(id, patchResponseDto);
+    return this.responseRepository.findOneBy({ id });
+  }
+
+  async like(likeResponseDto: LikeResponseDto): Promise<string> {
+    const response = await this.responseRepository
+      .createQueryBuilder('response')
+      .where('response.id = :id', { id: likeResponseDto.response })
+      .getOne();
+
+    if (!response) return 'Response not found';
+
+    const responseAlreadyLiked = response.likes.includes(
+      likeResponseDto.sender,
+    );
+
+    if (responseAlreadyLiked) {
+      this.responseRepository
+        .createQueryBuilder()
+        .where('response.id = :id', { id: likeResponseDto.response })
+        .update()
+        .set({
+          likes: response.likes.filter((id) => id !== likeResponseDto.sender),
+        })
+        .execute();
+
+      return 'Response unliked successfully';
+    } else {
+      this.responseRepository
+        .createQueryBuilder()
+        .where('response.id = :id', { id: likeResponseDto.response })
+        .update()
+        .set({
+          likes: [...response.likes, likeResponseDto.sender],
+        })
+        .execute();
+
+      return 'Response liked successfully';
+    }
   }
 
   async findAll(): Promise<Response[]> {
