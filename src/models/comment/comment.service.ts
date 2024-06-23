@@ -47,6 +47,7 @@ export class CommentService {
         'responses.sender',
         'responses.recipient',
       ],
+      order: { createdAt: 'ASC' },
     });
   }
 
