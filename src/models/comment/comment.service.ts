@@ -40,15 +40,17 @@ export class CommentService {
   }
 
   async timeline(): Promise<Comment[]> {
-    return await this.commentRepository.find({
-      relations: [
-        'sender',
-        'responses',
-        'responses.sender',
-        'responses.recipient',
-      ],
-      order: { createdAt: 'ASC' },
-    });
+    const timeline = await this.commentRepository
+      .createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.sender', 'sender')
+      .leftJoinAndSelect('comment.responses', 'response')
+      .leftJoinAndSelect('response.sender', 'responseSender')
+      .leftJoinAndSelect('response.recipient', 'responseRecipient')
+      .orderBy('comment.createdAt', 'ASC')
+      .addOrderBy('response.createdAt', 'ASC')
+      .getMany();
+
+    return timeline;
   }
 
   findOne(id: string): Promise<Comment | null> {
