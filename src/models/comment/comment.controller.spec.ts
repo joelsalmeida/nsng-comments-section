@@ -5,11 +5,14 @@ import { CommentService } from './comment.service';
 
 const CREATE_SUCCESS_MESSAGE = 'Comment posted successfully';
 const FIND_ALL_SUCCESS_MESSAGE = 'Comments fetched Successfully';
+const LIKED_SUCCESS_MESSAGE = 'Comment liked successfully.';
+const UNLED_SUCCESS_MESSAGE = 'Comment "unliked" successfully';
 
 const CREATE_PARAM = {
   sender: 'sender-id',
   body: 'comment body',
 };
+const LIKE_PARAM = { sender: 'sender-id', comment: 'comment-id' };
 
 describe('CommentController', () => {
   let commentController: CommentController;
@@ -70,6 +73,67 @@ describe('CommentController', () => {
       };
 
       expect(await commentController.create(CREATE_PARAM)).toStrictEqual(
+        expectedResult,
+      );
+    });
+  });
+
+  describe('like', () => {
+    it('if not liked, on success, should return "success: true, success liked message and service data"', async () => {
+      const mockCommentServiceReturnedData = {
+        id: '53720692-21b2-4254-9e1c-2b50ddfb3ad5',
+        liked: true,
+      };
+
+      jest
+        .spyOn(commentService, 'like')
+        .mockImplementation(async () => mockCommentServiceReturnedData);
+
+      const expectedResult = {
+        success: true,
+        message: LIKED_SUCCESS_MESSAGE,
+        data: mockCommentServiceReturnedData,
+      };
+
+      expect(await commentController.like(LIKE_PARAM)).toStrictEqual(
+        expectedResult,
+      );
+    });
+
+    it('if already liked, on success, should return "success: true, success unliked message and service data"', async () => {
+      const mockCommentServiceReturnedData = {
+        id: '53720692-21b2-4254-9e1c-2b50ddfb3ad5',
+        liked: false,
+      };
+
+      jest
+        .spyOn(commentService, 'like')
+        .mockImplementation(async () => mockCommentServiceReturnedData);
+
+      const expectedResult = {
+        success: true,
+        message: UNLED_SUCCESS_MESSAGE,
+        data: mockCommentServiceReturnedData,
+      };
+
+      expect(await commentController.like(LIKE_PARAM)).toStrictEqual(
+        expectedResult,
+      );
+    });
+
+    it('on error, should return "success: false and error message"', async () => {
+      const mockCommentServiceReturnedData = new Error('Internal Server Error');
+
+      jest.spyOn(commentService, 'like').mockImplementation(async () => {
+        throw mockCommentServiceReturnedData;
+      });
+
+      const expectedResult = {
+        success: false,
+        message: mockCommentServiceReturnedData.message,
+      };
+
+      expect(await commentController.like(LIKE_PARAM)).toStrictEqual(
         expectedResult,
       );
     });
