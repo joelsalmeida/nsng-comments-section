@@ -108,6 +108,13 @@ export class CommentController {
     try {
       const data = await this.commentService.findOne(id);
 
+      if (!data) {
+        return {
+          success: false,
+          message: `Comment not found with id: ${id}`,
+        };
+      }
+
       return {
         success: true,
         message: 'Comment fetched successfully',
@@ -128,7 +135,7 @@ export class CommentController {
 
       return {
         success: true,
-        message: 'Comments fetched Successfully',
+        message: 'Comments fetched successfully',
         data,
       };
     } catch (error) {
