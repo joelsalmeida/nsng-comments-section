@@ -19,11 +19,12 @@ export class CommentController {
   @Post()
   async create(@Body() createCommentDto: CreateCommentDto) {
     try {
-      await this.commentService.create(createCommentDto);
+      const comment = await this.commentService.create(createCommentDto);
 
       return {
         success: true,
         message: 'Comment posted successfully',
+        data: comment,
       };
     } catch (error) {
       return {
