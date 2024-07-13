@@ -36,12 +36,18 @@ export class CommentController {
 
   @Post('like')
   async like(@Body() likeCommentDto: LikeCommentDto) {
+    const MESSAGE_LIKED = {
+      true: 'Comment liked successfully.',
+      false: 'Comment "unliked" successfully',
+    };
+
     try {
       const data = await this.commentService.like(likeCommentDto);
 
       return {
         success: true,
-        message: data,
+        message: MESSAGE_LIKED[String(data.liked)],
+        data,
       };
     } catch (error) {
       return {

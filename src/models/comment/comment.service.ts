@@ -6,6 +6,8 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { LikeCommentDto } from './dto/like-comment.dto';
 import { PatchCommentDto } from './dto/patch-comment.dto';
 
+type TLikeReturn = { id: string; liked: boolean };
+
 @Injectable()
 export class CommentService {
   constructor(
@@ -61,13 +63,15 @@ export class CommentService {
     await this.commentRepository.delete(id);
   }
 
-  async like(likeCommentDto: LikeCommentDto): Promise<string> {
+  async like(likeCommentDto: LikeCommentDto): Promise<TLikeReturn> {
     const comment = await this.commentRepository
       .createQueryBuilder('comment')
       .where('comment.id = :id', { id: likeCommentDto.comment })
       .getOne();
 
-    if (!comment) return 'Comment not found';
+    if (!comment) {
+      throw new Error('Comment not found');
+    }
 
     const commentAlreadyLiked = comment.likes.includes(likeCommentDto.sender);
 
@@ -81,7 +85,7 @@ export class CommentService {
         })
         .execute();
 
-      return 'Comment unliked successfully';
+      return { id: comment.id, liked: false };
     } else {
       this.commentRepository
         .createQueryBuilder()
@@ -92,7 +96,7 @@ export class CommentService {
         })
         .execute();
 
-      return 'Comment liked successfully';
+      return { id: comment.id, liked: true };
     }
   }
 }
