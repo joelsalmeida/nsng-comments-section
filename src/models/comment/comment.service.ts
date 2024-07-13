@@ -22,7 +22,7 @@ export class CommentService {
   }
 
   async patch(id: string, patchCommentDto: PatchCommentDto): Promise<Comment> {
-    const comment = this.commentRepository.findOneBy({ id });
+    const comment = await this.commentRepository.findOneBy({ id });
 
     if (!comment) return null;
 
