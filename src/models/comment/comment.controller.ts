@@ -37,7 +37,7 @@ export class CommentController {
   @Post('like')
   async like(@Body() likeCommentDto: LikeCommentDto) {
     const MESSAGE_LIKED = {
-      true: 'Comment liked successfully.',
+      true: 'Comment liked successfully',
       false: 'Comment "unliked" successfully',
     };
 
