@@ -10,6 +10,7 @@ const CREATE_PARAM = {
 const LIKE_PARAM = { sender: 'sender-id', comment: 'comment-id' };
 const PATCH_ID_PARAM = 'patch-comment-id';
 const FIND_ONE_ID_PARAM = 'find-one-comment-id';
+const REMOVE_ID_PARAM = 'remove-comment-id';
 const PATCH_PARAM = { body: 'new comment body' };
 
 const CREATE_SUCCESS_MESSAGE = 'Comment posted successfully';
@@ -20,6 +21,8 @@ const UNLED_SUCCESS_MESSAGE = 'Comment "unliked" successfully';
 const PATCH_SUCCESS_MESSAGE = 'Comment patched successfully';
 const PATCH_NOT_FOUND_MESSAGE = `Comment not found with id: ${PATCH_ID_PARAM}`;
 const FIND_ONE_NOT_FOUND_MESSAGE = `Comment not found with id: ${FIND_ONE_ID_PARAM}`;
+const REMOVE_NOT_FOUND_MESSAGE = `Comment not found with id: ${REMOVE_ID_PARAM}`;
+const REMOVE_SUCCESS_MESSAGE = 'Comment removed successfully';
 
 describe('CommentController', () => {
   let commentController: CommentController;
@@ -296,6 +299,63 @@ describe('CommentController', () => {
       };
 
       expect(await commentController.findAll()).toStrictEqual(expectedResult);
+    });
+  });
+
+  describe('remove', () => {
+    it('on success, should return "success: true, success message and service data"', async () => {
+      const mockCommentServiceReturnedData = {
+        id: REMOVE_ID_PARAM,
+        removed: true,
+      };
+
+      jest
+        .spyOn(commentService, 'remove')
+        .mockImplementation(async () => mockCommentServiceReturnedData);
+
+      const expectedResult = {
+        success: true,
+        message: REMOVE_SUCCESS_MESSAGE,
+        data: mockCommentServiceReturnedData,
+      };
+
+      expect(await commentController.remove(REMOVE_ID_PARAM)).toStrictEqual(
+        expectedResult,
+      );
+    });
+
+    it('if comment not found (service return null), should return "success: false and error message with id"', async () => {
+      const mockCommentServiceReturnedData = null;
+
+      jest
+        .spyOn(commentService, 'remove')
+        .mockImplementation(async () => mockCommentServiceReturnedData);
+
+      const expectedResult = {
+        success: false,
+        message: REMOVE_NOT_FOUND_MESSAGE,
+      };
+
+      expect(await commentController.remove(REMOVE_ID_PARAM)).toStrictEqual(
+        expectedResult,
+      );
+    });
+
+    it('on error, should return "success: false and error message"', async () => {
+      const mockCommentServiceReturnedData = new Error('Internal Server Error');
+
+      jest.spyOn(commentService, 'remove').mockImplementation(async () => {
+        throw mockCommentServiceReturnedData;
+      });
+
+      const expectedResult = {
+        success: false,
+        message: mockCommentServiceReturnedData.message,
+      };
+
+      expect(await commentController.remove('comment-id')).toStrictEqual(
+        expectedResult,
+      );
     });
   });
 });
