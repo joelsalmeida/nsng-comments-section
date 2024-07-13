@@ -16,6 +16,7 @@ const PATCH_PARAM = { body: 'new comment body' };
 const CREATE_SUCCESS_MESSAGE = 'Comment posted successfully';
 const FIND_ONE_SUCCESS_MESSAGE = 'Comment fetched successfully';
 const FIND_ALL_SUCCESS_MESSAGE = 'Comments fetched successfully';
+const TIMELINE_SUCCESS_MESSAGE = 'Comments timeline fetched successfully';
 const LIKED_SUCCESS_MESSAGE = 'Comment liked successfully';
 const UNLED_SUCCESS_MESSAGE = 'Comment "unliked" successfully';
 const PATCH_SUCCESS_MESSAGE = 'Comment patched successfully';
@@ -299,6 +300,47 @@ describe('CommentController', () => {
       };
 
       expect(await commentController.findAll()).toStrictEqual(expectedResult);
+    });
+  });
+
+  describe('timeline', () => {
+    it('on success, should return "success: true, success message and service data"', async () => {
+      const mockCommentServiceReturnedData = [
+        {
+          sender: 'sender-id',
+          body: 'comment body',
+          likes: [],
+        },
+      ];
+
+      jest
+        .spyOn(commentService, 'timeline')
+        .mockImplementation(
+          async () => mockCommentServiceReturnedData as Comment[],
+        );
+
+      const expectedResult = {
+        success: true,
+        message: TIMELINE_SUCCESS_MESSAGE,
+        data: mockCommentServiceReturnedData,
+      };
+
+      expect(await commentController.timeline()).toStrictEqual(expectedResult);
+    });
+
+    it('on error, should return "success: false and error message"', async () => {
+      const mockCommentServiceReturnedData = new Error('Internal Server Error');
+
+      jest.spyOn(commentService, 'timeline').mockImplementation(async () => {
+        throw mockCommentServiceReturnedData;
+      });
+
+      const expectedResult = {
+        success: false,
+        message: mockCommentServiceReturnedData.message,
+      };
+
+      expect(await commentController.timeline()).toStrictEqual(expectedResult);
     });
   });
 
