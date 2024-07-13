@@ -149,12 +149,19 @@ export class CommentController {
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {
-      await this.commentService.remove(id);
+      const data = await this.commentService.remove(id);
+
+      if (!data) {
+        return {
+          success: false,
+          message: `Comment not found with id: ${id}`,
+        };
+      }
 
       return {
         success: true,
         message: 'Comment removed successfully',
-        data: id,
+        data,
       };
     } catch (error) {
       return {

@@ -7,6 +7,7 @@ import { LikeCommentDto } from './dto/like-comment.dto';
 import { PatchCommentDto } from './dto/patch-comment.dto';
 
 type TLikeReturn = { id: string; liked: boolean };
+type TRemoveReturn = { id: string; removed: boolean };
 
 @Injectable()
 export class CommentService {
@@ -59,8 +60,13 @@ export class CommentService {
     return this.commentRepository.findOneBy({ id });
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<TRemoveReturn> {
+    const comment = await this.commentRepository.findOneBy({ id });
+
+    if (!comment) return null;
+
     await this.commentRepository.delete(id);
+    return { id: comment.id, removed: true };
   }
 
   async like(likeCommentDto: LikeCommentDto): Promise<TLikeReturn> {
