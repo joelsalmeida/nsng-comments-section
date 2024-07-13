@@ -92,7 +92,7 @@ export class CommentController {
 
       return {
         success: true,
-        message: 'Comments timeline fetched Successfully',
+        message: 'Comments timeline fetched successfully',
         data: data,
       };
     } catch (error) {
