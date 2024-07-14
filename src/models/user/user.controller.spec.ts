@@ -10,6 +10,7 @@ const CREATE_PARAM = {
 };
 const FIND_ONE_SUCCESS_MESSAGE = 'User fetched successfully';
 const FIND_ONE_NOT_FOUND_MESSAGE = `User not found with id: ${FIND_ONE_ID_PARAM}`;
+const FIND_ALL_SUCCESS_MESSAGE = 'Users fetched Successfully';
 
 describe('UserController', () => {
   let userController: UserController;
@@ -126,6 +127,39 @@ describe('UserController', () => {
       expect(await userController.findOne('comment-id')).toStrictEqual(
         expectedResult,
       );
+    });
+  });
+
+  describe('findAll', () => {
+    it('on success, should return "success: true, success message and service data"', async () => {
+      const mockCommentServiceReturnedData = [];
+
+      jest
+        .spyOn(userService, 'findAll')
+        .mockImplementation(async () => mockCommentServiceReturnedData);
+
+      const expectedResult = {
+        success: true,
+        message: FIND_ALL_SUCCESS_MESSAGE,
+        data: mockCommentServiceReturnedData,
+      };
+
+      expect(await userController.findAll()).toStrictEqual(expectedResult);
+    });
+
+    it('on error, should return "success: false and error message"', async () => {
+      const mockCommentServiceReturnedData = new Error('Internal Server Error');
+
+      jest.spyOn(userService, 'findAll').mockImplementation(async () => {
+        throw mockCommentServiceReturnedData;
+      });
+
+      const expectedResult = {
+        success: false,
+        message: mockCommentServiceReturnedData.message,
+      };
+
+      expect(await userController.findAll()).toStrictEqual(expectedResult);
     });
   });
 });
