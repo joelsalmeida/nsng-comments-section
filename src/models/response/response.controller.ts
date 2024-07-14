@@ -19,11 +19,12 @@ export class ResponseController {
   @Post()
   async create(@Body() createResponseDto: CreateResponseDto) {
     try {
-      await this.responseService.create(createResponseDto);
+      const data = await this.responseService.create(createResponseDto);
 
       return {
         success: true,
         message: 'Response posted successfully',
+        data,
       };
     } catch (error) {
       return {
@@ -35,12 +36,18 @@ export class ResponseController {
 
   @Post('like')
   async like(@Body() likeResponseDto: LikeResponseDto) {
+    const MESSAGE_LIKED = {
+      true: 'Response liked successfully',
+      false: 'Response "unliked" successfully',
+    };
+
     try {
       const data = await this.responseService.like(likeResponseDto);
 
       return {
         success: true,
-        message: data,
+        message: MESSAGE_LIKED[String(data.liked)],
+        data,
       };
     } catch (error) {
       return {
@@ -83,6 +90,13 @@ export class ResponseController {
     try {
       const data = await this.responseService.findOne(id);
 
+      if (!data) {
+        return {
+          success: false,
+          message: `Response not found with id: ${id}`,
+        };
+      }
+
       return {
         success: true,
         message: 'Response fetched successfully',
@@ -103,7 +117,7 @@ export class ResponseController {
 
       return {
         success: true,
-        message: 'Responses fetched Successfully',
+        message: 'Responses fetched successfully',
         data,
       };
     } catch (error) {
@@ -117,12 +131,19 @@ export class ResponseController {
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {
-      await this.responseService.remove(id);
+      const data = await this.responseService.remove(id);
+
+      if (!data) {
+        return {
+          success: false,
+          message: `Response not found with id: ${id}`,
+        };
+      }
 
       return {
         success: true,
         message: 'Response removed successfully',
-        data: id,
+        data,
       };
     } catch (error) {
       return {
