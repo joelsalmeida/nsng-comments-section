@@ -6,6 +6,9 @@ import { LikeResponseDto } from './dto/like-response.dto';
 import { PatchResponseDto } from './dto/patch-response.dto';
 import { Response } from './response.entity';
 
+type TLikeReturn = { id: string; liked: boolean };
+type TRemoveReturn = { id: string; removed: boolean };
+
 @Injectable()
 export class ResponseService {
   constructor(
@@ -31,13 +34,15 @@ export class ResponseService {
     return this.responseRepository.findOneBy({ id });
   }
 
-  async like(likeResponseDto: LikeResponseDto): Promise<string> {
+  async like(likeResponseDto: LikeResponseDto): Promise<TLikeReturn> {
     const response = await this.responseRepository
       .createQueryBuilder('response')
       .where('response.id = :id', { id: likeResponseDto.response })
       .getOne();
 
-    if (!response) return 'Response not found';
+    if (!response) {
+      throw new Error('Comment not found');
+    }
 
     const responseAlreadyLiked = response.likes.includes(
       likeResponseDto.sender,
@@ -53,7 +58,7 @@ export class ResponseService {
         })
         .execute();
 
-      return 'Response unliked successfully';
+      return { id: response.id, liked: false };
     } else {
       this.responseRepository
         .createQueryBuilder()
@@ -64,7 +69,7 @@ export class ResponseService {
         })
         .execute();
 
-      return 'Response liked successfully';
+      return { id: response.id, liked: true };
     }
   }
 
@@ -83,7 +88,12 @@ export class ResponseService {
       .getMany();
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<TRemoveReturn> {
+    const response = await this.responseRepository.findOneBy({ id });
+
+    if (!response) return null;
+
     await this.responseRepository.delete(id);
+    return { id: response.id, removed: true };
   }
 }
