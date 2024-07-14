@@ -32,6 +32,6 @@ export class UserService {
     if (!user) return null;
 
     await this.userRepository.delete(id);
-    return { id: user.id, removed: true };
+    return { id, removed: true };
   }
 }

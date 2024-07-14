@@ -94,6 +94,6 @@ export class ResponseService {
     if (!response) return null;
 
     await this.responseRepository.delete(id);
-    return { id: response.id, removed: true };
+    return { id, removed: true };
   }
 }

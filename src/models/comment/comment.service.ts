@@ -66,7 +66,7 @@ export class CommentService {
     if (!comment) return null;
 
     await this.commentRepository.delete(id);
-    return { id: comment.id, removed: true };
+    return { id, removed: true };
   }
 
   async like(likeCommentDto: LikeCommentDto): Promise<TLikeReturn> {
