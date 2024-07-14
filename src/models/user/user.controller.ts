@@ -1,19 +1,20 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UseService } from './user.service';
+import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UseService) {}
+  constructor(private readonly userService: UserService) {}
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     try {
-      await this.userService.create(createUserDto);
+      const data = await this.userService.create(createUserDto);
 
       return {
         success: true,
         message: 'User created successfully',
+        data,
       };
     } catch (error) {
       return {
