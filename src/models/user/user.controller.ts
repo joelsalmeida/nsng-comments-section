@@ -47,6 +47,13 @@ export class UserController {
     try {
       const data = await this.userService.findOne(id);
 
+      if (!data) {
+        return {
+          success: false,
+          message: `User not found with id: ${id}`,
+        };
+      }
+
       return {
         success: true,
         message: 'User fetched successfully',
