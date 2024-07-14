@@ -4,6 +4,8 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.entity';
 
+type TRemoveReturn = { id: string; removed: boolean };
+
 @Injectable()
 export class UserService {
   constructor(
@@ -24,7 +26,12 @@ export class UserService {
     return this.userRepository.findOneBy({ id });
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<TRemoveReturn> {
+    const user = await this.findOne(id);
+
+    if (!user) return null;
+
     await this.userRepository.delete(id);
+    return { id: user.id, removed: true };
   }
 }
