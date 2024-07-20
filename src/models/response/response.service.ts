@@ -41,7 +41,7 @@ export class ResponseService {
       .getOne();
 
     if (!response) {
-      throw new Error('Comment not found');
+      throw new Error('Response not found');
     }
 
     const responseAlreadyLiked = response.likes.includes(
