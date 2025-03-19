@@ -7,7 +7,7 @@ import { AppService } from './app.service';
 import { CommentModule } from './models/comment/comment.module';
 import { ResponseModule } from './models/response/response.module';
 import { UsersModule } from './models/user/user.module';
-import { MySqlDataSource } from './database/data-sources/MySqlDatasource';
+import MySqlDataSource from './database/data-sources/MySqlDatasource';
 
 @Module({
   imports: [
