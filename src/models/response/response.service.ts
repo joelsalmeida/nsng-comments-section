@@ -49,7 +49,7 @@ export class ResponseService {
     );
 
     if (responseAlreadyLiked) {
-      this.responseRepository
+      await this.responseRepository
         .createQueryBuilder()
         .where('response.id = :id', { id: likeResponseDto.response })
         .update()
@@ -60,7 +60,7 @@ export class ResponseService {
 
       return { id: response.id, liked: false };
     } else {
-      this.responseRepository
+      await this.responseRepository
         .createQueryBuilder()
         .where('response.id = :id', { id: likeResponseDto.response })
         .update()

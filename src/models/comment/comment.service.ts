@@ -82,7 +82,7 @@ export class CommentService {
     const commentAlreadyLiked = comment.likes.includes(likeCommentDto.sender);
 
     if (commentAlreadyLiked) {
-      this.commentRepository
+      await this.commentRepository
         .createQueryBuilder()
         .where('comment.id = :id', { id: likeCommentDto.comment })
         .update()
@@ -93,7 +93,7 @@ export class CommentService {
 
       return { id: comment.id, liked: false };
     } else {
-      this.commentRepository
+      await this.commentRepository
         .createQueryBuilder()
         .where('comment.id = :id', { id: likeCommentDto.comment })
         .update()
